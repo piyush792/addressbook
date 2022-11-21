@@ -2,7 +2,7 @@ pipeline {
     agent any
     parameters{
         string(name: 'ENV', defaultValue: 'Prod', description: 'env to deploy')
-        booleanParam(name: 'EcecuteTests', defaultValue: true, description: 'decide to run tc')
+        booleanParam(name: 'executeTests', defaultValue: true, description: 'decide to run tc')
         choice(name: 'APPVERSION', choices: ['1.1', '1.2','1.3','1.4'])
     } 
 
@@ -15,6 +15,11 @@ pipeline {
             }
         }
         stage('UnitTest') {
+            when{
+                expression{
+                    params.executeTests==true
+                }
+            }
             steps {
                 script{
                     echo 'run the unit test cases'
