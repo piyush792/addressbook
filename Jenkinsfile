@@ -1,28 +1,34 @@
 pipeline {
     agent any
-    tools{
-        jdk 'myjava'
-        maven 'mymaven'
-    }
+    parameters{
+        string(name: 'ENV', defaultValue: 'Prod', description: 'env to deploy')
+        booleanParam(name: 'executeTests', defaultValue: true, description: 'decide to run tc')
+        choice(name: 'APPVERSION', choices: ['1.1', '1.2','1.3','1.4'])
+    } 
     stages {
         stage('Compile') {
             steps {
                 script{
                     echo 'compiling the code'
-                    sh 'mvn compile'
                 }
             }
         }
         stage('UnitTest') {
+            input{
+                message "Select the version to run TC"
+                ok "version selected"
+                paremeters{
+                    choice(name: 'VERSION', choices: ['1','2','3','4'])
+                }
+            }
+            when{
+                expression{
+                    params.executeTests == true
+                }
+            }
             steps {
                 script{
                     echo 'run the unit test cases'
-                    sh 'mvn test'
-                }
-            }
-            post{
-                always{
-                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
@@ -30,7 +36,8 @@ pipeline {
             steps {
                 script{
                     echo 'package the code'
-                    sh 'mvn package'
+                    echo "Deploy to env: ${params.ENV}"
+                    echo "Deploy the APP Version: ${params.APPVERSION}"
                 }
             }
         }
