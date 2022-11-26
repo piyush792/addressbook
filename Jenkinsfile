@@ -17,7 +17,7 @@ pipeline {
             input{
                 message "Select the version to run TC"
                 ok "version selected"
-                paremeters{
+                parameters{
                     choice(name: 'VERSION', choices: ['1','2','3','4'])
                 }
             }
