@@ -4,6 +4,9 @@ pipeline {
         jdk 'myjava'
         maven 'mymaven'
     }
+    environment{
+        BUILD_SERVER_IP='ec2-user@172.31.41.161'
+    }
     stages {
         stage('Compile') {
             steps {
@@ -32,7 +35,8 @@ pipeline {
                 script{
                     sshagent(['ssh-key']){
                     echo 'package the code'
-                    sh "ssh -o StrictHostKeyChecking=no 'bash mvn package'"
+                    sh "scp -o StrictHostKeyChecking=no server-script.sh ${BUILD_SERVER_IP}:/home/ec2-user"
+                    sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER_IP}:/home/ec2-user 'bash ~/server-script.sh'"
                     }
                 }
             }
