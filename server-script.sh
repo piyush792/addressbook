@@ -1,4 +1,4 @@
-sudo yum install java-1.8.0-open-jdk-devel -y
+sudo yum install java-11-openjdk.x86_64 -y
 sudo yum install git -y
 sudo yum install maven -y
 if [ -d "addressbook" ]
@@ -12,4 +12,3 @@ then
  cd /home/ec2-user/addressbook
  fi
  mvn package
- 
