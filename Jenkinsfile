@@ -3,7 +3,10 @@ pipeline {
     tools{
         jdk 'myjava'
         maven 'mymaven'
-    }   
+    }
+    environment{
+        BUILD_SERVER_IP='ec2-user@65.0.132.213'
+    }
     stages {
         stage('Compile') {
             steps {
@@ -19,14 +22,22 @@ pipeline {
                     echo 'run the unit test cases'
                     sh 'mvn test'
                 }
-            }            
+            }
+            post{
+                always{
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
         }
         stage('Package') {
             agent any
             steps {
-                script{                    
+                script{
+                    sshagent(['ssh-key']){
                     echo 'package the code'
-                    sh 'mvn package'
+                    sh "scp -o StrictHostKeyChecking=no server-script.sh ${BUILD_SERVER_IP}:/home/ec2-user"
+                    sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER_IP} 'bash ~/server-script.sh'"
+                    }
                 }
             }
         }
