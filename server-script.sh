@@ -1,4 +1,4 @@
-sudo yum install fontconfig java-11-openjdk -y
+sudo yum install fontconfig java-17-openjdk -y
 sudo yum install git -y
 sudo yum install maven -y
 if [ -d "addressbook" ]
